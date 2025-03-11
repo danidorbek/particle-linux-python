@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "particle-linux-python"
+version = "0.1.0"
+description = "SDK for interacting with Particle IoT from Linux"
+authors = [{name = "Your Name", email = "nick@particle.io"}]
+license = {text = "MIT"}
+readme = "README.md"
+dependencies = ["requests"]
