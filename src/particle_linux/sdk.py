@@ -4,17 +4,25 @@ import requests
 import threading
 
 class ParticleLinuxSDK:
-    CONFIG_PATH = os.path.expanduser("~/.particle/particle.config.json")
-    DISTRO_VERSIONS_PATH = "/etc/particle/distro_versions.json"
+    CONFIG_PATH = os.getenv("CONFIG_PATH", "~/.particle/particle.config.json")
+    DISTRO_VERSIONS_PATH = os.getenv("DISTRO_VERSIONS_PATH", "/etc/particle/distro_versions.json")
 
     def __init__(self):
-        self.config = self._load_config()
-        self.distro_versions = self._load_distro_versions()
-        self.access_token = self.config.get("access_token")
-        self.username = self.config.get("username")
-        self.device_id = self.config.get("deviceID")
+        self.emulation_mode = not (os.path.exists(self.CONFIG_PATH) and os.path.exists(self.DISTRO_VERSIONS_PATH))
+
+        if self.emulation_mode:
+            print("⚠️ Running in EMULATION mode: Config and distro files are missing.")
+            self.config = self._get_emulated_config()
+            self.distro_versions = self._get_emulated_distro_versions()
+        else:
+            self.config = self._load_config()
+            self.distro_versions = self._load_distro_versions()
+
+        self.access_token = self.config.get("access_token", None)
+        self.username = self.config.get("username", "Unknown")
+        self.device_id = self.config.get("deviceID", None)
         self.base_url = self.config.get("api_base_url", "https://api.particle.io/v1")
-        self.headers = {"Authorization": f"Bearer {self.access_token}"}
+        self.headers = {"Authorization": f"Bearer {self.access_token}"} if self.access_token else {}
 
     def _load_config(self):
         """Load the Particle config file."""
@@ -31,6 +39,31 @@ class ParticleLinuxSDK:
                 return json.load(f)
         except (FileNotFoundError, json.JSONDecodeError):
             return {}
+
+    def _get_emulated_config(self):
+        """Return a mock config for emulation mode."""
+        return {
+            "access_token": "mock_access_token",
+            "username": "emulated_user@particle.io",
+            "deviceID": "mock_device_id",
+            "api_base_url": "https://api.particle.io/v1"
+        }
+
+    def _get_emulated_distro_versions(self):
+        """Return mock distro versions for emulation mode."""
+        return {
+            "distro": {
+                "stack": "emulated-stack",
+                "version": "0.0.1-emulated",
+                "variant": "emulated"
+            },
+            "src": {
+                "ubuntu_20_04": "mock-image",
+                "quectel_bp_fw": "mock-fw",
+                "syscon_firmware": "mock-syscon"
+            }
+        }
+
 
     def get_user_details(self):
         """Retrieve the user's email from the config file."""
