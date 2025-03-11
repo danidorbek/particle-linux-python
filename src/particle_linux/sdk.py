@@ -94,6 +94,12 @@ class ParticleLinuxSDK:
 
     def publish_event(self, event_name, data, private=True, ttl=60):
         """Publish an event to the Particle Cloud."""
+
+        #drop emulation mode
+        if self.emulation_mode:
+            print("dropping package {data} for event {event_name} in emulation mode")
+            return
+
         url = f"{self.base_url}/devices/events"
         payload = {
             "name": event_name,
@@ -106,6 +112,11 @@ class ParticleLinuxSDK:
 
     def subscribe_event(self, event_name, callback):
         """Subscribe to a Particle event stream."""
+
+        if self.emulation_mode:
+            print("dropping package {data} for event {event_name} in emulation mode")
+            return
+
         url = f"{self.base_url}/devices/events/{event_name}"
         response = requests.get(url, headers=self.headers, stream=True)
         
