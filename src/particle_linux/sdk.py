@@ -29,7 +29,7 @@ class ParticleLinuxSDK:
 
         self.access_token = self.config.get("access_token", None)
         self.username = self.config.get("username", "Unknown")
-        self.device_id = self.config.get("deviceID", None)
+        self.device_id = self.config.get("deviceId", None)
         self.base_url = self.config.get("api_base_url", "https://api.particle.io/v1")
         self.headers = {"Authorization": f"Bearer {self.access_token}"} if self.access_token else {}
 
