@@ -30,6 +30,7 @@ class ParticleLinuxSDK:
         self.access_token = self.config.get("access_token", None)
         self.username = self.config.get("username", "Unknown")
         self.device_id = self.config.get("deviceId", None)
+        seld.product_id = self.config.get("productId", None)
         self.base_url = self.config.get("api_base_url", "https://api.particle.io/v1")
         self.headers = {"Authorization": f"Bearer {self.access_token}"} if self.access_token else {}
 
@@ -109,10 +110,11 @@ class ParticleLinuxSDK:
             print("dropping package {data} for event {event_name} in emulation mode")
             return
 
-        url = f"{self.base_url}/devices/events"
+        url = f"{self.base_url}/products/{self.product_id}/events"
         payload = {
             "name": event_name,
             "data": data,
+            "as_device_id": self.device_id,
             "private": "true",
             "ttl": ttl
         }
