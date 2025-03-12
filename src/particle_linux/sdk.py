@@ -12,6 +12,15 @@ class ParticleLinuxSDK:
 
         if self.emulation_mode:
             print("⚠️ Running in EMULATION mode: Config and distro files are missing.")
+
+            #print out all the files in the config and distro paths
+            print("Files in config path:")
+            for file in os.listdir(os.path.dirname(self.CONFIG_PATH)):
+                print(file)
+            print("Files in distro path:")
+            for file in os.listdir(os.path.dirname(self.DISTRO_VERSIONS_PATH)):
+                print(file)
+
             self.config = self._get_emulated_config()
             self.distro_versions = self._get_emulated_distro_versions()
         else:
@@ -92,7 +101,7 @@ class ParticleLinuxSDK:
             "syscon_firmware": self.distro_versions.get("src", {}).get("syscon_firmware", "Unknown")
         }
 
-    def publish_event(self, event_name, data, private=True, ttl=60):
+    def publish_event(self, event_name, data, ttl=60):
         """Publish an event to the Particle Cloud."""
 
         #drop emulation mode
@@ -104,7 +113,7 @@ class ParticleLinuxSDK:
         payload = {
             "name": event_name,
             "data": data,
-            "private": "true" if private else "false",
+            "private": "true",
             "ttl": ttl
         }
         response = requests.post(url, headers=self.headers, data=payload)
