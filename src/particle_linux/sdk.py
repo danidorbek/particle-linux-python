@@ -4,7 +4,7 @@ import requests
 import threading
 
 class ParticleLinuxSDK:
-    CONFIG_PATH = os.getenv("CONFIG_PATH", "~/.particle/particle.config.json")
+    CONFIG_PATH = os.getenv("CONFIG_PATH", "/home/particle/.particle/particle.config.json")
     DISTRO_VERSIONS_PATH = os.getenv("DISTRO_VERSIONS_PATH", "/etc/particle/distro_versions.json")
 
     def __init__(self):
